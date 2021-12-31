@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import com.aim.jpay.phonebook.dto.PhonebookDTO;
@@ -23,8 +24,9 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
+	@Cacheable(cacheNames = "phonebook", key = "#customer.getPhoneNumber()")
 	public PhonebookDTO buildPhonebookEntry(Customer customer) {
-		System.out.println("called ----->");
+		
 		PhonebookDTO phonebook = new PhonebookDTO();
 		phonebook.setName(customer.getName());
 		phonebook.setPhoneNumber(customer.getPhoneNumber());
@@ -50,12 +52,14 @@ public class CustomerServiceImpl implements CustomerService {
 		if (phonebook.getState() == null) {
 			phonebook.setState(States.Not_VALID);
 		}
+		System.out.println("called ----->");
 
 		return phonebook;
 	}
 
 	@Override
 	public List<PhonebookDTO> fetchPhoneBook() {
+
 		List<PhonebookDTO> phonebooks = new ArrayList<>();
 		List<Customer> customers = customerRepo.findAll();
 
