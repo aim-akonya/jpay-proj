@@ -1,2 +1,2 @@
 # jpay-proj
-Jumia Pay phone numbers classification projects
+Jumia Pay phone numbers classification
