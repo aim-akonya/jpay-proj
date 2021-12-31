@@ -1,29 +1,70 @@
 package com.aim.jpay.phonebook.service;
 
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.aim.jpay.phonebook.model.Country;
+import com.aim.jpay.phonebook.dto.PhonebookDTO;
+import com.aim.jpay.phonebook.model.Customer;
+import com.aim.jpay.phonebook.model.States;
 
 @SpringBootTest()
 class CustomerServiceTest {
 
+	@Autowired
+	private CustomerService underTest;
+
 	@Test
-	void test() {
-		String val = "(237) 678000959";
-		for (Country country : Country.values()) {
-			Pattern pattern = Pattern.compile(country.regexPattern());
-			Matcher matcher = pattern.matcher(val);
-			boolean matchFound = matcher.find();
-			if(matchFound) {
-				System.out.println("Country :" + country.name());
-			}else {
-				System.out.println("Country : NA");
-			}
-		}
+	void test_buildPhonebookEntry_stateValid() {
+		// given
+		Customer customer = new Customer();
+		customer.setId(2001);
+		customer.setName("Michael Akonya");
+		customer.setPhoneNumber("(237) 678000959");
+
+		// when
+		PhonebookDTO phonebook = underTest.buildPhonebookEntry(customer);
+
+		// then
+		Assertions.assertThat(phonebook).isInstanceOf(PhonebookDTO.class);
+		Assertions.assertThat(phonebook.getCountry().name()).isEqualTo("CAMEROON");
+		Assertions.assertThat(phonebook.getState().name()).isEqualTo(States.Valid.name());
+	}
+
+	@Test
+	void test_buildPhonebookEntry_stateInvalid() {
+		// given
+		Customer customer = new Customer();
+		customer.setId(2001);
+		customer.setName("Michael Akonya");
+		customer.setPhoneNumber("(237) 6780009592");
+
+		// when
+		PhonebookDTO phonebook = underTest.buildPhonebookEntry(customer);
+
+		// then
+		Assertions.assertThat(phonebook).isInstanceOf(PhonebookDTO.class);
+		Assertions.assertThat(phonebook.getCountry().name()).isEqualTo("CAMEROON");
+		Assertions.assertThat(phonebook.getState().name()).isEqualTo(States.Not_VALID.name());
+	}
+
+	@Test
+	void test_buildPhonebookEntry_countryNull() {
+		// given
+		Customer customer = new Customer();
+		customer.setId(2001);
+		customer.setName("Michael Akonya");
+		customer.setPhoneNumber("(277) 6780009592");
+
+		// when
+		PhonebookDTO phonebook = underTest.buildPhonebookEntry(customer);
+
+		// then
+		Assertions.assertThat(phonebook).isInstanceOf(PhonebookDTO.class);
+		Assertions.assertThat(phonebook.getCountry()).isNull();
+		Assertions.assertThat(phonebook.getState()).isNotNull();
+		Assertions.assertThat(phonebook.getState().name()).isEqualTo(States.Not_VALID.name());
 	}
 
 }

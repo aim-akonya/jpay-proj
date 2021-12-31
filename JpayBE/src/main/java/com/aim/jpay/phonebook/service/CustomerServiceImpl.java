@@ -1,5 +1,6 @@
 package com.aim.jpay.phonebook.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -23,7 +24,7 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public PhonebookDTO buildPhonebookEntry(Customer customer) {
-
+		System.out.println("called ----->");
 		PhonebookDTO phonebook = new PhonebookDTO();
 		phonebook.setName(customer.getName());
 		phonebook.setPhoneNumber(customer.getPhoneNumber());
@@ -55,8 +56,14 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	public List<PhonebookDTO> fetchPhoneBook() {
-		// TODO Auto-generated method stub
-		return null;
+		List<PhonebookDTO> phonebooks = new ArrayList<>();
+		List<Customer> customers = customerRepo.findAll();
+
+		customers.forEach(entry -> {
+			PhonebookDTO phonebook = this.buildPhonebookEntry(entry);
+			phonebooks.add(phonebook);
+		});
+		return phonebooks;
 	}
 
 }

@@ -7,24 +7,33 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.aim.jpay.phonebook.model.Customer;
-import com.aim.jpay.phonebook.repository.CustomerRepo;
+import com.aim.jpay.phonebook.dto.PhonebookDTO;
+import com.aim.jpay.phonebook.service.CustomerService;
+import com.aim.jpay.util.ApiResponse;
 
 @RequestMapping("/api/customer/phonebook")
 @RestController
 public class PhonebookController {
 
+	private CustomerService customerService;
+
 	@Autowired
-	private CustomerRepo customerRepo;
+	public PhonebookController(CustomerService customerService) {
+		this.customerService = customerService;
+	}
 
 	@GetMapping
-	public ResponseEntity<?> getContacts(@RequestParam(required = true, defaultValue = "0") int pageIndex,
-			@RequestParam(required = true, defaultValue = "10") int pageSize) {
-		List<Customer> customers = customerRepo.findAll();
-		return new ResponseEntity<>(customers, HttpStatus.OK);
+	public ResponseEntity<?> getContacts() {
+		ApiResponse<PhonebookDTO> apiResponse = new ApiResponse<>();
+		List<PhonebookDTO> phonebook = customerService.fetchPhoneBook();
+		apiResponse.setDataList(phonebook);
+		apiResponse.setMessage("success");
+		apiResponse.setStatus(1);
+		return new ResponseEntity<>(apiResponse, HttpStatus.OK);
 	}
+	
+	
 
 }
