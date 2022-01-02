@@ -21,9 +21,7 @@
       bordered
     >
       <q-list>
-        <q-item-label
-          header
-        >
+        <q-item-label header class="text-greay-8">
         Menu
         </q-item-label>
         <EssentialLink
@@ -45,9 +43,9 @@ import EssentialLink from 'components/EssentialLink.vue'
 const linksList = [
   {
     title: 'Home',
-    caption: 'quasar.dev',
-    icon: 'home',
-    link: '#'
+    caption: 'dashboard',
+    icon: 'dashboard',
+    link: '/'
   }
 ];
 
