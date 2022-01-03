@@ -37,7 +37,8 @@ public class CustomerServiceImpl implements CustomerService {
 			boolean isMatch = matcher.matches();
 			if (isMatch) {
 				phonebook.setCountry(country);
-				phonebook.setState(States.Valid);
+				phonebook.setCountryCode(country.countryCode());
+				phonebook.setState(States.VALID);
 				break;
 			} else {
 				// check if number starts with the country code
@@ -45,12 +46,14 @@ public class CustomerServiceImpl implements CustomerService {
 				countryCode.append("(").append(country.countryCode()).append(")");
 				if (customer.getPhoneNumber().startsWith(countryCode.toString())) {
 					phonebook.setCountry(country);
+					phonebook.setCountryCode(country.countryCode());
 					break;
 				}
 			}
 		}
+
 		if (phonebook.getState() == null) {
-			phonebook.setState(States.Not_VALID);
+			phonebook.setState(States.NOT_VALID);
 		}
 		return phonebook;
 	}
@@ -59,23 +62,39 @@ public class CustomerServiceImpl implements CustomerService {
 	public List<Phonebook> fetchPhoneBook(Country country, States state) {
 
 		List<Phonebook> phonebooks = new ArrayList<>();
-
-		if (country != null && state != null) {
-
-		} else if (country != null) {
-
-		} else if (state != null) {
-
-		} else {
-
-		}
-
 		List<Customer> customers = customerRepo.findAll();
 
-		customers.forEach(entry -> {
-			Phonebook phonebook = this.buildPhonebookEntry(entry);
-			phonebooks.add(phonebook);
-		});
+		if (country != null && state != null) {
+			customers.forEach(entry -> {
+				Phonebook phonebook = this.buildPhonebookEntry(entry);
+				if (phonebook.getCountry() == country && phonebook.getState() == state) {
+					phonebooks.add(phonebook);
+				}
+			});
+
+		} else if (country != null) {
+			customers.forEach(entry -> {
+				Phonebook phonebook = this.buildPhonebookEntry(entry);
+				if (phonebook.getCountry() == country) {
+					phonebooks.add(phonebook);
+				}
+			});
+
+		} else if (state != null) {
+			customers.forEach(entry -> {
+				Phonebook phonebook = this.buildPhonebookEntry(entry);
+				if (phonebook.getState() == state) {
+					phonebooks.add(phonebook);
+				}
+			});
+
+		} else {
+			customers.forEach(entry -> {
+				Phonebook phonebook = this.buildPhonebookEntry(entry);
+				phonebooks.add(phonebook);
+			});
+		}
+
 		return phonebooks;
 	}
 

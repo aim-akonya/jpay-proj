@@ -29,7 +29,7 @@ public class PhonebookController {
 
 	@GetMapping
 	public ResponseEntity<?> getContacts(@RequestParam(value = "country", required = false) Country country,
-			@RequestParam(value = "country", required = false) States state) {
+			@RequestParam(value = "state", required = false) States state) {
 		ApiResponse<Phonebook> apiResponse = new ApiResponse<>();
 		List<Phonebook> phonebook = customerService.fetchPhoneBook(country, state);
 		apiResponse.setDataList(phonebook);

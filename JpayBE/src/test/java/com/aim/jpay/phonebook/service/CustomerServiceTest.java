@@ -1,70 +1,112 @@
 package com.aim.jpay.phonebook.service;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.BDDMockito;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.aim.jpay.phonebook.dto.Phonebook;
+import com.aim.jpay.phonebook.model.Country;
 import com.aim.jpay.phonebook.model.Customer;
 import com.aim.jpay.phonebook.model.States;
+import com.aim.jpay.phonebook.repository.CustomerRepo;
 
-@SpringBootTest()
+@ExtendWith(MockitoExtension.class)
 class CustomerServiceTest {
 
-	@Autowired
-	private CustomerService underTest;
+	@Mock
+	private CustomerRepo customerRepo;
 
-	@Test
-	void test_buildPhonebookEntry_stateValid() {
-		// given
-		Customer customer = new Customer();
-		customer.setId(2001);
-		customer.setName("Michael Akonya");
-		customer.setPhoneNumber("(237) 678000959");
+	private CustomerService customerService;
 
-		// when
-		Phonebook phonebook = underTest.buildPhonebookEntry(customer);
+	private List<Customer> testCustomers;
 
-		// then
-		Assertions.assertThat(phonebook).isInstanceOf(Phonebook.class);
-		Assertions.assertThat(phonebook.getCountry().name()).isEqualTo("CAMEROON");
-		Assertions.assertThat(phonebook.getState().name()).isEqualTo(States.Valid.name());
+	@BeforeEach
+	public void setUp() {
+		customerService = new CustomerServiceImpl(customerRepo);
+		testCustomers = new ArrayList<>();
+		testCustomers.add(new Customer(1, "Michael Akonya", "(212) 698054317")); // MOROCCO valid
+		testCustomers.add(new Customer(2, "Felix Achayo", "(256) 7503O6263")); // Uganda invalid
+		testCustomers.add(new Customer(3, "Kelvin", "(258) 847651504")); // MOZAMBIQUE invalid
+		testCustomers.add(new Customer(4, "JACKSON NELLY", "(256) 775069443"));
+
 	}
 
 	@Test
-	void test_buildPhonebookEntry_stateInvalid() {
-		// given
-		Customer customer = new Customer();
-		customer.setId(2001);
-		customer.setName("Michael Akonya");
-		customer.setPhoneNumber("(237) 6780009592");
+	public void canFetchAllContacts() {
 
-		// when
-		Phonebook phonebook = underTest.buildPhonebookEntry(customer);
+		BDDMockito.given(customerRepo.findAll()).willReturn(testCustomers);
 
-		// then
-		Assertions.assertThat(phonebook).isInstanceOf(Phonebook.class);
-		Assertions.assertThat(phonebook.getCountry().name()).isEqualTo("CAMEROON");
-		Assertions.assertThat(phonebook.getState().name()).isEqualTo(States.Not_VALID.name());
+		List<Phonebook> phonebook = customerService.fetchPhoneBook(null, null);
+
+		Mockito.verify(customerRepo).findAll();
+
+		Assertions.assertThat(phonebook.size()).isEqualTo(4);
+		phonebook.forEach(entry -> {
+			Assertions.assertThat(entry).isNotNull();
+		});
 	}
 
 	@Test
-	void test_buildPhonebookEntry_countryNull() {
+	public void canFilterByCountryAndState() {
+		BDDMockito.given(customerRepo.findAll()).willReturn(testCustomers);
+		List<Phonebook> phonebook = customerService.fetchPhoneBook(Country.UGANDA, States.NOT_VALID);
+		Mockito.verify(customerRepo).findAll();
+
+		Assertions.assertThat(phonebook.size()).isEqualTo(1);
+
+		Phonebook entry = phonebook.get(0);
+		Assertions.assertThat(entry.getCountryCode()).isEqualTo(Country.UGANDA.countryCode());
+		Assertions.assertThat(entry.getCountry()).isEqualTo(Country.UGANDA);
+		Assertions.assertThat(entry.getState()).isEqualTo(States.NOT_VALID);
+	}
+
+	@Test
+	public void canFilterByCountry() {
+		BDDMockito.given(customerRepo.findAll()).willReturn(testCustomers);
+		List<Phonebook> phonebook = customerService.fetchPhoneBook(Country.UGANDA, null);
+		Mockito.verify(customerRepo).findAll();
+		Assertions.assertThat(phonebook.size()).isEqualTo(2);
+		phonebook.forEach(entry -> {
+			Assertions.assertThat(entry.getCountry()).isEqualTo(Country.UGANDA);
+		});
+	}
+
+	@Test
+	public void canFilterByState() {
+		BDDMockito.given(customerRepo.findAll()).willReturn(testCustomers);
+		List<Phonebook> phonebook = customerService.fetchPhoneBook(null, States.NOT_VALID);
+		Mockito.verify(customerRepo).findAll();
+		Assertions.assertThat(phonebook.size()).isEqualTo(2);
+		phonebook.forEach(entry -> {
+			Assertions.assertThat(entry.getState()).isEqualTo(States.NOT_VALID);
+		});
+	}
+
+	@Test
+	public void canBuildPhonebookEntry() {
 		// given
-		Customer customer = new Customer();
-		customer.setId(2001);
-		customer.setName("Michael Akonya");
-		customer.setPhoneNumber("(277) 6780009592");
-
+		Customer customer = testCustomers.get(0);
 		// when
-		Phonebook phonebook = underTest.buildPhonebookEntry(customer);
-
+		Phonebook phonebook = customerService.buildPhonebookEntry(customer);
 		// then
-		Assertions.assertThat(phonebook).isInstanceOf(Phonebook.class);
-		Assertions.assertThat(phonebook.getCountry()).isNull();
-		Assertions.assertThat(phonebook.getState()).isNotNull();
-		Assertions.assertThat(phonebook.getState().name()).isEqualTo(States.Not_VALID.name());
+		Assertions.assertThat(phonebook.getCountry()).isEqualTo(Country.MOROCCO);
+		Assertions.assertThat(phonebook.getState()).isEqualTo(States.VALID);
+		Assertions.assertThat(phonebook.getCountryCode()).isEqualTo(Country.MOROCCO.countryCode());
+	}
+
+	@AfterEach
+	public void tearDown() {
+		customerService = null;
+		testCustomers = null;
 	}
 
 }

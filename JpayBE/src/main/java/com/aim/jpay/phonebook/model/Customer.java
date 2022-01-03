@@ -24,7 +24,14 @@ public class Customer {
 	public Customer() {
 
 	}
-
+	
+	public Customer(Integer id, String name, String phoneNumber) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.phoneNumber = phoneNumber;
+	}
+	
 	public Integer getId() {
 		return id;
 	}

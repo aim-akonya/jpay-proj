@@ -8,6 +8,7 @@ class JpayBeApplicationTests {
 
 	@Test
 	void contextLoads() {
+		
 	}
 
 }

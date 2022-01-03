@@ -9,12 +9,22 @@ public class Phonebook {
 
 	private String phoneNumber;
 
+	private String countryCode;
+
 	private Country country;
 
 	private States state;
 
 	public Phonebook() {
 
+	}
+
+	public Phonebook(String name, String phoneNumber, String countryCode, Country country, States state) {
+		this.name = name;
+		this.phoneNumber = phoneNumber;
+		this.countryCode = countryCode;
+		this.country = country;
+		this.state = state;
 	}
 
 	public String getName() {
@@ -48,7 +58,13 @@ public class Phonebook {
 	public void setState(States state) {
 		this.state = state;
 	}
-	
-	
+
+	public String getCountryCode() {
+		return countryCode;
+	}
+
+	public void setCountryCode(String countryCode) {
+		this.countryCode = countryCode;
+	}
 
 }
