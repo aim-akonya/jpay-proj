@@ -3,7 +3,7 @@ package com.aim.jpay.phonebook.dto;
 import com.aim.jpay.phonebook.model.Country;
 import com.aim.jpay.phonebook.model.States;
 
-public class PhonebookDTO {
+public class Phonebook {
 
 	private String name;
 
@@ -13,7 +13,7 @@ public class PhonebookDTO {
 
 	private States state;
 
-	public PhonebookDTO() {
+	public Phonebook() {
 
 	}
 

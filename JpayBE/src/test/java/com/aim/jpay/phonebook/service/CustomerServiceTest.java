@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.aim.jpay.phonebook.dto.PhonebookDTO;
+import com.aim.jpay.phonebook.dto.Phonebook;
 import com.aim.jpay.phonebook.model.Customer;
 import com.aim.jpay.phonebook.model.States;
 
@@ -24,10 +24,10 @@ class CustomerServiceTest {
 		customer.setPhoneNumber("(237) 678000959");
 
 		// when
-		PhonebookDTO phonebook = underTest.buildPhonebookEntry(customer);
+		Phonebook phonebook = underTest.buildPhonebookEntry(customer);
 
 		// then
-		Assertions.assertThat(phonebook).isInstanceOf(PhonebookDTO.class);
+		Assertions.assertThat(phonebook).isInstanceOf(Phonebook.class);
 		Assertions.assertThat(phonebook.getCountry().name()).isEqualTo("CAMEROON");
 		Assertions.assertThat(phonebook.getState().name()).isEqualTo(States.Valid.name());
 	}
@@ -41,10 +41,10 @@ class CustomerServiceTest {
 		customer.setPhoneNumber("(237) 6780009592");
 
 		// when
-		PhonebookDTO phonebook = underTest.buildPhonebookEntry(customer);
+		Phonebook phonebook = underTest.buildPhonebookEntry(customer);
 
 		// then
-		Assertions.assertThat(phonebook).isInstanceOf(PhonebookDTO.class);
+		Assertions.assertThat(phonebook).isInstanceOf(Phonebook.class);
 		Assertions.assertThat(phonebook.getCountry().name()).isEqualTo("CAMEROON");
 		Assertions.assertThat(phonebook.getState().name()).isEqualTo(States.Not_VALID.name());
 	}
@@ -58,10 +58,10 @@ class CustomerServiceTest {
 		customer.setPhoneNumber("(277) 6780009592");
 
 		// when
-		PhonebookDTO phonebook = underTest.buildPhonebookEntry(customer);
+		Phonebook phonebook = underTest.buildPhonebookEntry(customer);
 
 		// then
-		Assertions.assertThat(phonebook).isInstanceOf(PhonebookDTO.class);
+		Assertions.assertThat(phonebook).isInstanceOf(Phonebook.class);
 		Assertions.assertThat(phonebook.getCountry()).isNull();
 		Assertions.assertThat(phonebook.getState()).isNotNull();
 		Assertions.assertThat(phonebook.getState().name()).isEqualTo(States.Not_VALID.name());

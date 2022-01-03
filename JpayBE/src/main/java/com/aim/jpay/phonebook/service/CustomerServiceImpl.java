@@ -8,7 +8,7 @@ import java.util.regex.Pattern;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
-import com.aim.jpay.phonebook.dto.PhonebookDTO;
+import com.aim.jpay.phonebook.dto.Phonebook;
 import com.aim.jpay.phonebook.model.Country;
 import com.aim.jpay.phonebook.model.Customer;
 import com.aim.jpay.phonebook.model.States;
@@ -25,9 +25,9 @@ public class CustomerServiceImpl implements CustomerService {
 
 	@Override
 	@Cacheable(cacheNames = "phonebook", key = "#customer.getPhoneNumber()")
-	public PhonebookDTO buildPhonebookEntry(Customer customer) {
-		
-		PhonebookDTO phonebook = new PhonebookDTO();
+	public Phonebook buildPhonebookEntry(Customer customer) {
+
+		Phonebook phonebook = new Phonebook();
 		phonebook.setName(customer.getName());
 		phonebook.setPhoneNumber(customer.getPhoneNumber());
 
@@ -41,30 +41,39 @@ public class CustomerServiceImpl implements CustomerService {
 				break;
 			} else {
 				// check if number starts with the country code
-				String code = customer.getPhoneNumber().split(" ")[0];
-				if (code.contains(country.countryCode())) {
+				StringBuilder countryCode = new StringBuilder();
+				countryCode.append("(").append(country.countryCode()).append(")");
+				if (customer.getPhoneNumber().startsWith(countryCode.toString())) {
 					phonebook.setCountry(country);
 					break;
 				}
 			}
 		}
-
 		if (phonebook.getState() == null) {
 			phonebook.setState(States.Not_VALID);
 		}
-		System.out.println("called ----->");
-
 		return phonebook;
 	}
 
 	@Override
-	public List<PhonebookDTO> fetchPhoneBook() {
+	public List<Phonebook> fetchPhoneBook(Country country, States state) {
 
-		List<PhonebookDTO> phonebooks = new ArrayList<>();
+		List<Phonebook> phonebooks = new ArrayList<>();
+
+		if (country != null && state != null) {
+
+		} else if (country != null) {
+
+		} else if (state != null) {
+
+		} else {
+
+		}
+
 		List<Customer> customers = customerRepo.findAll();
 
 		customers.forEach(entry -> {
-			PhonebookDTO phonebook = this.buildPhonebookEntry(entry);
+			Phonebook phonebook = this.buildPhonebookEntry(entry);
 			phonebooks.add(phonebook);
 		});
 		return phonebooks;
