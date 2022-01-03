@@ -1,0 +1,10 @@
+version: '3'
+services:
+  jpay-backend:
+    container_name: jpay-backend
+    ports:
+      - 8080:8080
+    build:
+      context: JpayBE/
+      dockerfile: Dockerfile
+    image: jpay-backend:latest  

@@ -49,7 +49,6 @@ class PhonebookControllerTest {
 	public void shouldReturnAllContacts() throws Exception {
 
 		Mockito.when(customerService.fetchPhoneBook(null, null)).thenReturn(testEntries);
-		
 
 		mockMvc.perform(MockMvcRequestBuilders.get("/api/customer/phonebook").contentType(MediaType.APPLICATION_JSON))
 				.andExpect(MockMvcResultMatchers.status().isOk())
@@ -97,5 +96,4 @@ class PhonebookControllerTest {
 	public void tearDown() {
 		this.testEntries = null;
 	}
-
 }
