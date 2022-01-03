@@ -7,4 +7,13 @@ services:
     build:
       context: JpayBE/
       dockerfile: Dockerfile
-    image: jpay-backend:latest  
+    image: jpay-backend:latest
+  jpay-frontend:
+    container_name: jpay-frontend
+    ports:
+      - 80:80
+    build:
+      context: jpayFE/
+      dockerfile: Dockerfile
+    image: jpay-frontend:latest
+
