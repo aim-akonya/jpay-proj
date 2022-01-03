@@ -11,7 +11,7 @@
           @click="toggleLeftDrawer"
         />
         <q-toolbar-title>
-          Jpay
+          JPay Contacts
         </q-toolbar-title>
       </q-toolbar>
     </q-header>
