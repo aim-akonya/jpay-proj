@@ -15,5 +15,3 @@ services:
       context: jpayFE/
       dockerfile: Dockerfile
     image: jpay-frontend:latest
-    environment:
-      - API_BASE_URL=jpay-backend
