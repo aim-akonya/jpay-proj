@@ -24,7 +24,7 @@ public class CustomerServiceImpl implements CustomerService {
 	}
 
 	@Override
-	@Cacheable(cacheNames = "phonebook", key = "#customer.getPhoneNumber()")
+	@Cacheable(cacheNames = "phonebook", key = "#customer.phoneNumber")
 	public Phonebook buildPhonebookEntry(Customer customer) {
 
 		Phonebook phonebook = new Phonebook();

@@ -9,11 +9,11 @@ services:
       dockerfile: Dockerfile
     image: jpay-backend:latest
   jpay-frontend:
+    network_mode: host
     container_name: jpay-frontend
-    ports:
-      - 80:80
     build:
       context: jpayFE/
       dockerfile: Dockerfile
     image: jpay-frontend:latest
-
+    environment:
+      - API_BASE_URL=jpay-backend
