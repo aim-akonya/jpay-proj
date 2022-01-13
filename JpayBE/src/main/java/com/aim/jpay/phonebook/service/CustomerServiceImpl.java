@@ -2,10 +2,8 @@ package com.aim.jpay.phonebook.service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
-import org.springframework.cache.annotation.Cacheable;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.aim.jpay.phonebook.dto.Phonebook;
@@ -18,44 +16,17 @@ import com.aim.jpay.phonebook.repository.CustomerRepo;
 public class CustomerServiceImpl implements CustomerService {
 
 	private CustomerRepo customerRepo;
+	private PhonebookProcessor processor;
 
-	public CustomerServiceImpl(CustomerRepo customerRepo) {
+	@Autowired
+	public CustomerServiceImpl(CustomerRepo customerRepo, PhonebookProcessor processor) {
 		this.customerRepo = customerRepo;
+		this.processor = processor;
 	}
 
 	@Override
-	@Cacheable(cacheNames = "phonebook", key = "#customer.phoneNumber")
 	public Phonebook buildPhonebookEntry(Customer customer) {
-
-		Phonebook phonebook = new Phonebook();
-		phonebook.setName(customer.getName());
-		phonebook.setPhoneNumber(customer.getPhoneNumber());
-
-		for (Country country : Country.values()) {
-			Pattern pattern = Pattern.compile(country.regexPattern());
-			Matcher matcher = pattern.matcher(customer.getPhoneNumber());
-			boolean isMatch = matcher.matches();
-			if (isMatch) {
-				phonebook.setCountry(country);
-				phonebook.setCountryCode(country.countryCode());
-				phonebook.setState(States.VALID);
-				break;
-			} else {
-				// check if number starts with the country code
-				StringBuilder countryCode = new StringBuilder();
-				countryCode.append("(").append(country.countryCode()).append(")");
-				if (customer.getPhoneNumber().startsWith(countryCode.toString())) {
-					phonebook.setCountry(country);
-					phonebook.setCountryCode(country.countryCode());
-					break;
-				}
-			}
-		}
-
-		if (phonebook.getState() == null) {
-			phonebook.setState(States.NOT_VALID);
-		}
-		return phonebook;
+		return processor.processPhonebook(customer);
 	}
 
 	@Override
