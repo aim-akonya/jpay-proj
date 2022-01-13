@@ -1,9 +1,13 @@
 package com.aim.jpay.phonebook.dto;
 
+import java.io.Serializable;
+
 import com.aim.jpay.phonebook.model.Country;
 import com.aim.jpay.phonebook.model.States;
 
-public class Phonebook {
+public class Phonebook implements Serializable{
+	
+	private static final long serialVersionUID = 1L;
 
 	private String name;
 

@@ -27,11 +27,14 @@ class CustomerServiceTest {
 
 	private CustomerService customerService;
 
+	private PhonebookProcessor processor;
+
 	private List<Customer> testCustomers;
 
 	@BeforeEach
 	public void setUp() {
-		customerService = new CustomerServiceImpl(customerRepo);
+		processor = new PhonebookProcessorImpl();
+		customerService = new CustomerServiceImpl(customerRepo, processor);
 		testCustomers = new ArrayList<>();
 		testCustomers.add(new Customer(1, "Michael Akonya", "(212) 698054317")); // MOROCCO valid
 		testCustomers.add(new Customer(2, "Felix Achayo", "(256) 7503O6263")); // Uganda invalid
